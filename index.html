@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sách lật trang chân thực</title>
+    <style>
+        /* CSS Cơ bản cho trang web */
+        body {
+            background-color: #2c3e50;
+            /* Màu nền gỗ/tối làm nổi bật sách */
+            background-image: radial-gradient(circle, #435b71, #2c3e50);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Định dạng khung sách */
+        .book-container {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            /* Đổ bóng cho cả quyển sách */
+        }
+
+        /* Định dạng từng trang giấy */
+        .page {
+            background-color: #fdfcf0;
+            /* Màu giấy mộc hơi ngà */
+            border: 1px solid #d3c7b3;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Hiệu ứng đổ bóng ở gáy sách tạo độ cong 3D cho giấy */
+        .page.--left {
+            border-right: 0;
+            box-shadow: inset -7px 0 30px -7px rgba(0, 0, 0, 0.3);
+        }
+
+        .page.--right {
+            border-left: 0;
+            box-shadow: inset 7px 0 30px -7px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Tùy chỉnh ảnh vừa vặn với trang sách */
+        .page img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            /* Hoặc dùng 'contain' nếu ảnh của bạn không cùng tỷ lệ */
+            user-select: none;
+            /* Chống bôi đen ảnh khi kéo thả lật trang */
+            pointer-events: none;
+        }
+
+        /* Hiển thị số trang nhỏ ở góc */
+        .page-number {
+            position: absolute;
+            bottom: 12px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .page.--left .page-number {
+            left: 20px;
+        }
+
+        .page.--right .page-number {
+            right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Khung chứa nội dung sách -->
+    <div class="book-container" id="book">
+        <!-- Javascript sẽ tự động chèn các trang ảnh vào đây -->
+    </div>
+
+    <!-- Nhúng thư viện lật sách StPageFlip qua CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // ==========================================
+            // CẤU HÌNH SỐ LƯỢNG TRANG ẢNH CỦA BẠN Ở ĐÂY
+            const tongSoTrang = 26; // Thay số 10 bằng biến 'x' - tổng số ảnh bạn có
+            // ==========================================
+
+            const bookElement = document.getElementById('book');
+
+            // Vòng lặp tự động tạo mã HTML cho các trang từ 1.png đến x.png
+            for (let i = 1; i <= tongSoTrang; i++) {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page';
+
+                // Thẻ img sẽ trỏ tới thư mục assets/1.png, assets/2.png...
+                // Nếu không tải được ảnh, nó sẽ hiển thị ảnh giả để web không bị lỗi giao diện
+                pageDiv.innerHTML = `
+                    <img src="assets/${i}.png" alt="Trang ${i}" onerror="this.src='https://via.placeholder.com/400x600/fdfcf0/888888?text=Trang+${i}'">
+                    <div class="page-number">${i}</div>
+                `;
+                bookElement.appendChild(pageDiv);
+            }
+
+            // Khởi tạo thư viện lật sách
+            const pageFlip = new St.PageFlip(bookElement, {
+                width: 400,            // Chiều rộng 1 trang (px)
+                height: 600,           // Chiều cao 1 trang (px)
+                size: "fixed",         // Giữ kích thước cố định để trông giống sách thật
+                minWidth: 300,
+                maxWidth: 500,
+                minHeight: 400,
+                maxHeight: 700,
+                maxShadowOpacity: 0.6, // Độ đậm của bóng đổ khi đang lật giấy (0 đến 1)
+                showCover: true,       // Gán Trang 1 và Trang cuối làm bìa sách cứng
+                mobileScrollSupport: false
+            });
+
+            // Tải toàn bộ cấu trúc vừa tạo vào trong sách
+            pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+        });
+    </script>
+</body>
+
+</html>
