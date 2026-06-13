@@ -112,7 +112,7 @@
                 // Thẻ img sẽ trỏ tới thư mục assets/1.png, assets/2.png...
                 // Nếu không tải được ảnh, nó sẽ hiển thị ảnh giả để web không bị lỗi giao diện
                 pageDiv.innerHTML = `
-                    <img src="assets/${i}.png" alt="Trang ${i}" onerror="this.src='https://via.placeholder.com/400x600/fdfcf0/888888?text=Trang+${i}'">
+                    <img src="assets/${i}.png" loading="lazy" alt="Trang ${i}" onerror="this.src='https://via.placeholder.com/400x600/fdfcf0/888888?text=Trang+${i}'">
                     <div class="page-number">${i}</div>
                 `;
                 bookElement.appendChild(pageDiv);
@@ -133,12 +133,13 @@
                 width: pageWidth,      // Sử dụng chiều rộng tự động tính
                 height: pageHeight,    // Sử dụng chiều cao tự động tính
                 size: "fixed",         // Giữ kích thước cố định để trông giống sách thật
-                minWidth: 300,
+                minWidth: 100,         // Giảm kích thước tối thiểu để vừa màn hình dọc của điện thoại
                 maxWidth: 1500,        // Mở rộng giới hạn để cho phép sách trên màn hình to
-                minHeight: 400,
+                minHeight: 150,        // Giảm kích thước tối thiểu
                 maxHeight: 2000,       // Mở rộng giới hạn
                 maxShadowOpacity: 0.6, // Độ đậm của bóng đổ khi đang lật giấy (0 đến 1)
                 showCover: false,      // Tắt chế độ bìa đóng để sách luôn mở 2 trang ngay từ đầu
+                usePortrait: false,    // Ép buộc luôn hiển thị 2 trang (quyển sách mở) kể cả trên điện thoại
                 mobileScrollSupport: false
             });
 
