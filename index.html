@@ -112,7 +112,7 @@
                 // Thẻ img sẽ trỏ tới thư mục assets/1.png, assets/2.png...
                 // Nếu không tải được ảnh, nó sẽ hiển thị ảnh giả để web không bị lỗi giao diện
                 pageDiv.innerHTML = `
-                    <img src="assets/${i}.png" loading="lazy" alt="Trang ${i}" onerror="this.src='https://via.placeholder.com/400x600/fdfcf0/888888?text=Trang+${i}'">
+                    <img src="assets/${i}.png" alt="Trang ${i}" onerror="this.src='https://via.placeholder.com/400x600/fdfcf0/888888?text=Trang+${i}'">
                     <div class="page-number">${i}</div>
                 `;
                 bookElement.appendChild(pageDiv);
