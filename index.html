@@ -112,15 +112,25 @@
                 bookElement.appendChild(pageDiv);
             }
 
+            // Tự động tính toán kích thước để sách to vừa vặn khoảng 88% màn hình
+            let pageHeight = Math.floor(window.innerHeight * 0.88);
+            let pageWidth = Math.floor(pageHeight * (400 / 600)); // Giữ nguyên tỷ lệ trang (4:6)
+
+            // Đảm bảo không bị tràn ngang khi sách mở ra 2 trang (dành cho màn hình tỉ lệ hẹp)
+            if (pageWidth * 2 > window.innerWidth * 0.9) {
+                pageWidth = Math.floor((window.innerWidth * 0.9) / 2);
+                pageHeight = Math.floor(pageWidth * (600 / 400));
+            }
+
             // Khởi tạo thư viện lật sách
             const pageFlip = new St.PageFlip(bookElement, {
-                width: 400,            // Chiều rộng 1 trang (px)
-                height: 600,           // Chiều cao 1 trang (px)
+                width: pageWidth,      // Sử dụng chiều rộng tự động tính
+                height: pageHeight,    // Sử dụng chiều cao tự động tính
                 size: "fixed",         // Giữ kích thước cố định để trông giống sách thật
                 minWidth: 300,
-                maxWidth: 500,
+                maxWidth: 1500,        // Mở rộng giới hạn để cho phép sách trên màn hình to
                 minHeight: 400,
-                maxHeight: 700,
+                maxHeight: 2000,       // Mở rộng giới hạn
                 maxShadowOpacity: 0.6, // Độ đậm của bóng đổ khi đang lật giấy (0 đến 1)
                 showCover: true,       // Gán Trang 1 và Trang cuối làm bìa sách cứng
                 mobileScrollSupport: false
