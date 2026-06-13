@@ -64,6 +64,13 @@
             pointer-events: none;
         }
 
+        /* Phóng to ảnh đầu tiên (0.png) lấp đầy toàn bộ trang sách */
+        .page:first-child img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         /* Hiển thị số trang nhỏ ở góc */
         .page-number {
             position: absolute;
@@ -97,8 +104,8 @@
 
             const bookElement = document.getElementById('book');
 
-            // Vòng lặp tự động tạo mã HTML cho các trang từ 1.png đến x.png
-            for (let i = 1; i <= tongSoTrang; i++) {
+            // Vòng lặp tự động tạo mã HTML bắt đầu từ 0.png
+            for (let i = 0; i <= tongSoTrang; i++) {
                 const pageDiv = document.createElement('div');
                 pageDiv.className = 'page';
 
@@ -131,7 +138,7 @@
                 minHeight: 400,
                 maxHeight: 2000,       // Mở rộng giới hạn
                 maxShadowOpacity: 0.6, // Độ đậm của bóng đổ khi đang lật giấy (0 đến 1)
-                showCover: true,       // Gán Trang 1 và Trang cuối làm bìa sách cứng
+                showCover: false,      // Tắt chế độ bìa đóng để sách luôn mở 2 trang ngay từ đầu
                 mobileScrollSupport: false
             });
 
