@@ -36,6 +36,9 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            /* Ép trình duyệt dùng GPU để xử lý (Tăng tốc phần cứng) giúp lật mượt hơn */
+            transform: translateZ(0);
+            will-change: transform;
         }
 
         /* Hiệu ứng đổ bóng ở gáy sách tạo độ cong 3D cho giấy */
@@ -126,6 +129,20 @@
 
             100% {
                 transform: rotate(360deg);
+            }
+        }
+
+        /* Tối ưu hóa hiệu năng riêng cho thiết bị di động (Mobile) */
+        @media (max-width: 768px) {
+            .book-container {
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+                /* Giảm độ nặng của bóng đổ khung sách */
+            }
+
+            .page.--left,
+            .page.--right {
+                /* Tắt bóng đổ 3D ở gáy sách trên điện thoại vì nó làm tụt FPS rất nhiều khi lật */
+                box-shadow: none;
             }
         }
     </style>
@@ -242,7 +259,7 @@
                     minHeight: 150,
                     maxHeight: 2000,
                     maxShadowOpacity: 0.6,
-                    showCover: true,       // BẬT chế độ bìa đóng để trang đầu tiên hiển thị đẹp ở chế độ dọc
+                    showCover: isPortrait, // BẬT chế độ bìa ở màn dọc, TẮT ở màn ngang để 0.png nằm bên trái
                     usePortrait: true,     // BẬT tính năng chuyển 1 trang khi ở màn hình dọc và 2 trang ở màn hình ngang
                     startPage: savedPage,  // Mở lại đúng trang đang đọc nếu vừa xoay màn hình
                     mobileScrollSupport: false
