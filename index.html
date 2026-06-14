@@ -100,6 +100,15 @@
             font-weight: bold;
         }
 
+        /* Dòng chữ trạng thái với dấu chấm động */
+        #loading-status {
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: normal;
+            color: #bdc3c7;
+            /* Màu xám sáng */
+        }
+
         .spinner {
             border: 6px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
@@ -128,6 +137,7 @@
     <div id="loading-screen">
         <div class="spinner"></div>
         <div id="progress-text">Đang tải... 0%</div>
+        <div id="loading-status">Đang truy cập vào trang hướng dẫn</div>
     </div>
 
     <!-- Khung chứa nội dung sách -->
@@ -149,9 +159,18 @@
             const bookElement = document.getElementById('book');
             const loadingScreen = document.getElementById('loading-screen');
             const progressText = document.getElementById('progress-text');
+            const loadingStatus = document.getElementById('loading-status');
 
             let loadedImagesCount = 0;
             const totalImages = tongSoTrang + 1; // Tính cả trang 0.png
+
+            // Hiệu ứng dấu chấm động (1 chấm, 2 chấm, 3 chấm)
+            let dotCount = 0;
+            const dotInterval = setInterval(() => {
+                dotCount = (dotCount + 1) % 4; // Lặp lại giá trị 0, 1, 2, 3
+                // Dùng hàm repeat để nhân bản số lượng dấu chấm theo dotCount
+                loadingStatus.innerText = 'Đang truy cập vào trang hướng dẫn' + '.'.repeat(dotCount);
+            }, 400); // Thay đổi dấu chấm mỗi 400ms
 
             // Cập nhật phần trăm tiến trình
             function updateProgress() {
@@ -160,6 +179,9 @@
 
                 // Khi đã tải xong tất cả ảnh
                 if (loadedImagesCount === totalImages) {
+                    // Dừng hiệu ứng dấu chấm động
+                    clearInterval(dotInterval);
+
                     // Đợi thêm 300ms để người xem nhìn rõ số 100% trước khi ẩn
                     setTimeout(() => {
                         loadingScreen.style.display = 'none';
