@@ -207,33 +207,59 @@
                     bookElement.appendChild(pageDiv);
                 }
 
+                // Phát hiện xem thiết bị đang ở chế độ dọc hay ngang
+                let isPortrait = window.innerWidth < window.innerHeight;
+
+                // Lấy trang đang đọc hiện tại nếu có lưu trước đó (do xoay màn hình)
+                let savedPage = parseInt(sessionStorage.getItem('currentFlipPage')) || 0;
+                sessionStorage.removeItem('currentFlipPage'); // Xóa sau khi lấy
+
                 // Tự động tính toán kích thước để sách to vừa vặn khoảng 88% màn hình
                 let pageHeight = Math.floor(window.innerHeight * 0.88);
                 let pageWidth = Math.floor(pageHeight * (400 / 600)); // Giữ nguyên tỷ lệ trang (4:6)
 
-                // Đảm bảo không bị tràn ngang khi sách mở ra 2 trang (dành cho màn hình tỉ lệ hẹp)
-                if (pageWidth * 2 > window.innerWidth * 0.9) {
-                    pageWidth = Math.floor((window.innerWidth * 0.9) / 2);
-                    pageHeight = Math.floor(pageWidth * (600 / 400));
+                if (isPortrait) {
+                    // Chế độ dọc: Tự động điều chỉnh để 1 trang vừa vặn với chiều ngang màn hình
+                    if (pageWidth > window.innerWidth * 0.9) {
+                        pageWidth = Math.floor(window.innerWidth * 0.9);
+                        pageHeight = Math.floor(pageWidth * (600 / 400));
+                    }
+                } else {
+                    // Chế độ ngang: Đảm bảo 2 trang không bị tràn ngang
+                    if (pageWidth * 2 > window.innerWidth * 0.9) {
+                        pageWidth = Math.floor((window.innerWidth * 0.9) / 2);
+                        pageHeight = Math.floor(pageWidth * (600 / 400));
+                    }
                 }
 
                 // Khởi tạo thư viện lật sách
-                const pageFlip = new St.PageFlip(bookElement, {
+                window.pageFlip = new St.PageFlip(bookElement, {
                     width: pageWidth,      // Sử dụng chiều rộng tự động tính
                     height: pageHeight,    // Sử dụng chiều cao tự động tính
                     size: "fixed",         // Giữ kích thước cố định để trông giống sách thật
-                    minWidth: 100,         // Giảm kích thước tối thiểu để vừa màn hình dọc của điện thoại
-                    maxWidth: 1500,        // Mở rộng giới hạn để cho phép sách trên màn hình to
-                    minHeight: 150,        // Giảm kích thước tối thiểu
-                    maxHeight: 2000,       // Mở rộng giới hạn
-                    maxShadowOpacity: 0.6, // Độ đậm của bóng đổ khi đang lật giấy (0 đến 1)
-                    showCover: false,      // Tắt chế độ bìa đóng để sách luôn mở 2 trang ngay từ đầu
-                    usePortrait: false,    // Ép buộc luôn hiển thị 2 trang (quyển sách mở) kể cả trên điện thoại
+                    minWidth: 100,
+                    maxWidth: 1500,
+                    minHeight: 150,
+                    maxHeight: 2000,
+                    maxShadowOpacity: 0.6,
+                    showCover: true,       // BẬT chế độ bìa đóng để trang đầu tiên hiển thị đẹp ở chế độ dọc
+                    usePortrait: true,     // BẬT tính năng chuyển 1 trang khi ở màn hình dọc và 2 trang ở màn hình ngang
+                    startPage: savedPage,  // Mở lại đúng trang đang đọc nếu vừa xoay màn hình
                     mobileScrollSupport: false
                 });
 
                 // Tải toàn bộ cấu trúc vừa tạo vào trong sách
-                pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+                window.pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+
+                // Xử lý khi người dùng xoay điện thoại (đổi dọc <-> ngang)
+                window.addEventListener('resize', () => {
+                    const currentIsPortrait = window.innerWidth < window.innerHeight;
+                    if (currentIsPortrait !== isPortrait) {
+                        // Lưu lại trang hiện tại và tải lại trang web để tính toán lại kích thước hiển thị
+                        sessionStorage.setItem('currentFlipPage', window.pageFlip.getCurrentPageIndex());
+                        location.reload();
+                    }
+                });
             }
 
             // Bắt đầu tải ngầm ảnh về Cache
